@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório PDF</title>
+    <style>
+        @page { size: a4 portrait; margin: 2cm; }
+        body { font-family: Helvetica, sans-serif; font-size: 12px; }
+        h2 { text-align: center; color: #004a8d; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 6px; border: 1px solid #000; text-align: left; }
+        th { background-color: #004a8d; color: #ffffff; }
+    </style>
+</head>
+<body>
+    <h2>Óticas Vida - Relatório de Vendas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Filial</th>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>NF</th>
+                <th>Série</th>
+                <th>Emissão</th>
+                <th>Mensagem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in resultados %}
+            <tr>
+                <td>{{ item.filial }}</td>
+                <td>{{ item.numero_pedido }}</td>
+                <td>{{ item.cliente }}</td>
+                <td>{{ item.numero_nf }}</td>
+                <td>{{ item.serie_nf }}</td></td>
+                <td>{{ item.data_emissao|date:"d/m/Y" }}</td>
+                <td>{{ item.mensagem_nota }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Nenhum dado encontrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

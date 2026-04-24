@@ -1,0 +1,176 @@
+{% extends 'relatorios/base.html' %}
+
+{% block content %}
+<style>
+    /* Estilos das Abas (Tabs) */
+    .tabs { display: flex; gap: 10px; border-bottom: 2px solid #eee; margin-bottom: 25px; }
+    .tab-btn { background: none; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; color: #888; cursor: pointer; transition: 0.3s; margin-bottom: -2px; }
+    .tab-btn:hover { color: #004a8d; }
+    .tab-btn.active { color: #004a8d; border-bottom: 3px solid #004a8d; }
+    
+    .tab-content { display: none; animation: fadeIn 0.4s; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Layout Interno */
+    .admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+    .form-box { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; }
+    .form-box input, .form-box select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    .form-box label { font-size: 13px; font-weight: bold; color: #555; }
+    .btn-salvar { background-color: #28a745; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+    .btn-salvar:hover { background-color: #218838; }
+    
+    /* Tabelas e Alertas */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+    th { background-color: #004a8d; color: white; font-weight: 600; }
+    tr:hover { background-color: #f1f8ff; }
+    
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; }
+    .badge-admin { background-color: #dc3545; }
+    .badge-user { background-color: #17a2b8; }
+    
+    .alert { padding: 15px; margin-bottom: 20px; border-radius: 6px; font-weight: bold; }
+    .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+</style>
+
+<h2 style="margin-top: 0; color: #004a8d;"><i class="fas fa-user-shield"></i> Gestão de Acessos</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="openTab('aba-usuarios', this)"><i class="fas fa-users"></i> Usuários</button>
+    <button class="tab-btn" onclick="openTab('aba-modulos', this)"><i class="fas fa-cubes"></i> Módulos (Grupos)</button>
+</div>
+
+<div id="aba-usuarios" class="tab-content active">
+    <div class="admin-grid">
+        <div class="form-box">
+            <h3 style="margin-top: 0; color: #333; font-size: 16px;"><i class="fas fa-user-plus"></i> Novo Usuário</h3>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form_usuario %}
+                    <div>
+                        <label>{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <button type="submit" name="btn_salvar_usuario" class="btn-salvar"><i class="fas fa-check"></i> Cadastrar Usuário</button>
+            </form>
+        </div>
+
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuário (Login)</th>
+                        <th>Nível de Acesso</th>
+                        <th>Módulos Permitidos</th>
+                        <th>Último Login</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios_cadastrados %}
+                    <tr>
+                        <td><strong>{{ u.username }}</strong></td>
+                        <td>
+                            {% if u.is_superuser %}
+                                <span class="badge badge-admin">Admin. Sistema</span>
+                            {% else %}
+                                <span class="badge badge-user">Comum</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if u.is_superuser %}
+                                <span style="color: #888; font-size: 12px;">Acesso Total</span>
+                            {% else %}
+                                {% for group in u.groups.all %}
+                                    <span style="background: #e9ecef; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #333; border: 1px solid #ccc;">{{ group.name }}</span>
+                                {% empty %}
+                                    <span style="color: #aaa; font-size: 12px;">Sem acessos</span>
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                        <td style="font-size: 12px; color: #666;">
+                            {{ u.last_login|date:"d/m/Y H:i" |default:"Nunca acessou" }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="aba-modulos" class="tab-content">
+    <div class="admin-grid">
+        <div class="form-box">
+            <h3 style="margin-top: 0; color: #333; font-size: 16px;"><i class="fas fa-cube"></i> Novo Módulo</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Crie as categorias de acesso que aparecerão no menu lateral.</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form_modulo %}
+                    <div>
+                        <label>{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <button type="submit" name="btn_salvar_modulo" class="btn-salvar" style="background-color: #004a8d;"><i class="fas fa-plus"></i> Cadastrar Módulo</button>
+            </form>
+        </div>
+
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome do Módulo (Grupo)</th>
+                        <th>Quantidade de Usuários Ativos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mod in modulos_cadastrados %}
+                    <tr>
+                        <td><strong>{{ mod.name }}</strong></td>
+                        <td>
+                            <span style="background: #e9ecef; padding: 4px 8px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                                <i class="fas fa-users" style="color: #888; margin-right: 5px;"></i>
+                                {{ mod.user_set.count }} usuário(s)
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" style="text-align: center; color: #888; padding: 20px;">Nenhum módulo cadastrado ainda.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(tabId, btnElement) {
+        // Esconde todo o conteúdo
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        // Remove a linha azul de todos os botões
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Mostra a aba clicada e pinta o botão selecionado
+        document.getElementById(tabId).classList.add('active');
+        btnElement.classList.add('active');
+    }
+</script>
+{% endblock %}

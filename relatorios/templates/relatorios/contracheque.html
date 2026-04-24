@@ -1,0 +1,98 @@
+{% extends 'relatorios/base.html' %}
+
+{% block content %}
+<style>
+    .filtros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .filtros-grid input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    .filtros-grid label { font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px; display: block; }
+    
+    .btn-acao { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-filtrar { background-color: #004a8d; }
+    .btn-excel { background-color: #217346; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px;}
+    th, td { padding: 12px 10px; border-bottom: 1px solid #eee; text-align: left; }
+    th { background-color: #f8f9fa; color: #333; font-weight: 600; }
+    tr:hover { background-color: #f1f8ff; }
+    
+    /* Cores para Valores Financeiros */
+    .valor-provento { color: #28a745; font-weight: bold; }
+    .valor-desconto { color: #dc3545; font-weight: bold; }
+    .valor-base { color: #6c757d; font-style: italic; }
+</style>
+
+<h2 style="margin-top: 0; color: #004a8d;"><i class="fas fa-file-invoice-dollar"></i> Relatório de Contracheque</h2>
+<hr style="border: 0; height: 1px; background: #eee; margin-bottom: 25px;">
+
+<form method="get">
+    <div class="filtros-grid">
+        {% for field in form %}
+            <div>
+                <label>{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="submit" name="acao" value="html" class="btn-acao btn-filtrar">
+            <i class="fas fa-search"></i> Filtrar Dados
+        </button>
+
+        {% if resultados %}
+            <button type="submit" name="acao" value="excel" class="btn-acao btn-excel">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+            </button>
+        {% endif %}
+    </div>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Filial</th>
+            <th>Matrícula</th>
+            <th>Nome</th>
+            <th>Descrição da Verba</th>
+            <th>Tipo</th>
+            <th>Data Pagamento</th>
+            <th>Valor (R$)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in resultados %}
+        <tr>
+            <td>{{ item.filial }}</td>
+            <td>{{ item.matricula }}</td>
+            <td>{{ item.nome }}</td>
+            <td>{{ item.descricao_verba }}</td>
+            <td>
+                {% if item.tipo_verba == 'Provento' %}
+                    <span style="background: #e6f4ea; color: #1e8e3e; padding: 3px 8px; border-radius: 12px; font-size: 12px;">{{ item.tipo_verba }}</span>
+                {% elif item.tipo_verba == 'Desconto' %}
+                    <span style="background: #fce8e6; color: #d93025; padding: 3px 8px; border-radius: 12px; font-size: 12px;">{{ item.tipo_verba }}</span>
+                {% else %}
+                    <span style="background: #f1f3f4; color: #5f6368; padding: 3px 8px; border-radius: 12px; font-size: 12px;">{{ item.tipo_verba }}</span>
+                {% endif %}
+            </td>
+            <td>{{ item.data_pag|date:"d/m/Y" }}</td>
+            
+            <td class="
+                {% if item.tipo_verba == 'Provento' %}valor-provento
+                {% elif item.tipo_verba == 'Desconto' %}valor-desconto
+                {% else %}valor-base{% endif %}
+            ">
+                R$ {{ item.valor }}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: #888;">
+                <i class="fas fa-search-dollar" style="font-size: 35px; margin-bottom: 15px; color: #ccc;"></i><br>
+                Utilize os filtros acima para consultar os dados da folha de pagamento.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'relatorios/base.html' %} {% block content %}
+<style>
+    /* Estilos locais para a tabela e form */
+    .filtros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .filtros-grid input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    .filtros-grid label { font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px; display: block; }
+    .btn-acao { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-filtrar { background-color: #004a8d; }
+    .btn-excel { background-color: #217346; }
+    .btn-pdf { background-color: #dc3545; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+    th { background-color: #f8f9fa; color: #333; font-weight: 600; }
+    tr:hover { background-color: #f1f8ff; } /* Efeito visual ao passar o mouse */
+</style>
+
+<h2 style="margin-top: 0; color: #004a8d;"><i class="fas fa-file-invoice-dollar"></i> Relatório de Vendas</h2>
+<hr style="border: 0; height: 1px; background: #eee; margin-bottom: 25px;">
+
+<form method="get">
+    <div class="filtros-grid">
+        {% for field in form %}
+            <div>
+                <label>{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="submit" name="acao" value="html" class="btn-acao btn-filtrar">
+            <i class="fas fa-search"></i> Filtrar Dados
+        </button>
+
+        {% if resultados %}
+            <button type="submit" name="acao" value="excel" class="btn-acao btn-excel">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+            </button>
+            <button type="submit" name="acao" value="pdf" formtarget="_blank" class="btn-acao btn-pdf">
+                <i class="fas fa-file-pdf"></i> Gerar PDF
+            </button>
+        {% endif %}
+    </div>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Cód. Vend.</th>
+            <th>Vendedor</th>
+            <th>Emissão</th>
+            <th>Cód. Prod.</th>
+            <th>Descrição Produto</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in resultados %}
+        <tr>
+            <td>{{ item.codigo_vendedor }}</td>
+            <td>{{ item.nome_vendedor }}</td>
+            <td>{{ item.data_emissao|date:"d/m/Y" }}</td>
+            <td>{{ item.codigo_produto }}</td>
+            <td>{{ item.descricao_produto }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" style="text-align: center; padding: 30px; color: #888;">
+                <i class="fas fa-inbox" style="font-size: 30px; margin-bottom: 10px;"></i><br>
+                Use os filtros acima para carregar as informações.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
