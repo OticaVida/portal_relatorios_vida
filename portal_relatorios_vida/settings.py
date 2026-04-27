@@ -132,7 +132,7 @@ LOGOUT_URL = 'login'
 import os 
 
 LOGGING = {
-    'verion': 1,
+    'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'datalhado': {
