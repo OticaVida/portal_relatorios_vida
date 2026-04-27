@@ -137,6 +137,10 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = '/login/' 
 LOGOUT_URL = 'login'
 
+# Ajustando fuso horário
+TIME_ZONE = 'America/Sao_Paulo'
+USE_TZ = True
+
 # Configuração de logs de erro (produção)
 LOGGING = {
     'version': 1,
