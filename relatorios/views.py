@@ -294,7 +294,7 @@ def relatorio_vendas_marca(request):
                 for item in resultados:
                     ws.append([
                         item['FILIAL'], 
-                        item['EMISSAO'], 
+                        item['DATA_EMISSAO'], 
                         item['VENDEDOR'], 
                         item['NOTA_FISCAL'], 
                         item['SERIE'], 
