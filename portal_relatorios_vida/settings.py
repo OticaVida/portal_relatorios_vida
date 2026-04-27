@@ -135,7 +135,7 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'datalhado': {
+        'detalhado': {
             'format': '[{asctime}] {levelname} [{name}:{lineno}] - {message}',
             'style': '{',
             'datefmt': '%d/%m/%Y %H:%M:%S',
