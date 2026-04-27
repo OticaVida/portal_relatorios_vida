@@ -17,93 +17,134 @@
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--cinza-fundo); display: flex; color: var(--texto); overflow-x: hidden; }
 
         /* MENU LATERAL */
-        .sidebar { width: 75px; background-color: var(--branco); height: 100vh; position: fixed; box-shadow: 2px 0 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; white-space: nowrap; z-index: 100; }
-        .sidebar:hover { width: 260px; }
-        .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #eee; margin-bottom: 10px; }
-        .logo-icon { font-size: 24px; color: var(--azul-escuro); min-width: 35px; text-align: center; }
-        .logo-text { font-weight: 800; font-size: 18px; color: var(--azul-escuro); letter-spacing: -0.5px; }
+        .sidebar { width: 75px; background-color: var(--branco); height: 100vh; position: fixed; box-shadow: 2px 0 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; white-space: nowrap; z-index: 1000; }
+        .sidebar:hover { width: 280px; }
 
-        .menu-items { flex-grow: 1; padding: 10px 0; }
-        .menu-item { position: relative; }
-        .menu-toggle, .menu-item > a { width: 100%; padding: 12px 20px; display: flex; align-items: center; gap: 15px; border: none; background: none; color: #666; cursor: pointer; text-align: left; text-decoration: none; font-size: 15px; transition: all 0.2s; }
-        .menu-toggle i:first-child, .menu-item > a i { min-width: 35px; font-size: 18px; text-align: center; }
-        .menu-toggle:hover, .menu-item > a:hover { background-color: var(--azul-claro); color: var(--azul-escuro); }
-        .arrow { margin-left: auto; font-size: 12px; transition: transform 0.3s; }
+        /* NOVA ÁREA DA LOGO */
+        .logo-area { padding: 20px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; overflow: hidden; height: 40px;}
+        .logo-area i { min-width: 75px; text-align: center; color: var(--azul-escuro); font-size: 26px; }
+        .logo-img { max-height: 32px; opacity: 0; transition: opacity 0.3s; margin-left: 5px; }
+        .sidebar:hover .logo-img { opacity: 1; }
+
+        .menu-items { padding: 15px 0; flex-grow: 1; overflow-y: auto; overflow-x: hidden; }
+        .menu-item { display: flex; flex-direction: column; }
+        .menu-item > a, .menu-items > a { display: flex; align-items: center; padding: 15px 0; color: #555; text-decoration: none; font-weight: 500; cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; }
+        .menu-item > a:hover, .menu-items > a:hover { background-color: var(--azul-claro); color: var(--azul-escuro); border-left-color: var(--azul-destaque); }
         
-        .submenu { display: none; background-color: #f9f9f9; padding: 5px 0; }
-        .submenu a { padding: 10px 20px 10px 55px; display: flex; align-items: center; gap: 10px; color: #777; text-decoration: none; font-size: 14px; transition: 0.2s; }
-        .submenu a:hover { color: var(--azul-escuro); background-color: #f0f0f0; }
-        .submenu a i { font-size: 8px; }
+        .icon-main { min-width: 75px; text-align: center; font-size: 20px; }
+        .menu-text { opacity: 0; transition: opacity 0.3s; flex-grow: 1; }
+        .sidebar:hover .menu-text { opacity: 1; }
 
-        .menu-item.active .submenu { display: block; }
-        .menu-item.active .arrow { transform: rotate(90deg); }
+        .arrow { margin-right: 25px; transition: transform 0.3s; opacity: 0; }
+        .sidebar:hover .arrow { opacity: 1; }
+        .menu-item.active .arrow { transform: rotate(180deg); }
 
-        /* ÁREA DO USUÁRIO */
-        .user-area { border-top: 1px solid #eee; padding: 15px 10px; margin-top: auto; }
-        .user-details { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; }
-        .user-details p { margin: 0; font-size: 13px; color: #888; }
-        .btn-sair-icon { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; border: none; background-color: #fee2e2; color: #dc2626; cursor: pointer; transition: 0.2s; }
-        .btn-sair-icon:hover { background-color: #fecaca; }
+        .submenu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background-color: #f8f9fa; }
+        .menu-item.active .submenu { max-height: 400px; }
+        .submenu a { display: flex; align-items: center; padding: 12px 0; color: #666; text-decoration: none; font-size: 14px; }
+        .submenu a:hover { background-color: #e9ecef; color: var(--azul-escuro); }
+        .submenu a i { min-width: 75px; text-align: right; margin-right: 15px; font-size: 12px; opacity: 0.7;}
 
-        /* CONTEÚDO PRINCIPAL */
-        .main-content { margin-left: 75px; flex-grow: 1; padding: 30px; transition: margin-left 0.3s; }
-        .card { background-color: var(--branco); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 25px; min-height: 80vh; }
+        .user-area { border-top: 1px solid #eee; background: #fff; padding: 10px 0;}
+        .btn-sair-icon { display: block; width: 100%; padding: 15px 0; text-align: center; color: #dc3545; font-size: 22px; background: none; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-sair-icon:hover { background: #ffeeee; }
+        
+        .user-details { display: none; padding: 10px 20px; text-align: center; }
+        .user-details p { margin: 0 0 10px 0; font-size: 14px; color: #555; }
+        .btn-sair-full { width: 100%; background: #dc3545; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-sair-full:hover { background: #c82333; }
+
+        .sidebar:hover .btn-sair-icon { display: none; }
+        .sidebar:hover .user-details { display: block; }
+
+        .main-content { margin-left: 75px; padding: 40px; width: calc(100% - 75px); box-sizing: border-box; transition: margin-left 0.3s, width 0.3s; }
+        .card { background: var(--branco); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="sidebar-header">
-            <i class="fas fa-eye logo-icon"></i>
-            <span class="logo-text">PORTAL OVS</span>
+        <div class="logo-area">
+            <i class="fas fa-glasses"></i>
+            <img src="{% static 'relatorios/img/logo.webp' %}" class="logo-img" alt="Óticas Vida">
         </div>
-
+        
+        {% load auth_extras %}
+        
         <div class="menu-items">
-            <div class="menu-item">
-                <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> <span>Início</span></a>
-            </div>
+            <a href="{% url 'dashboard' %}">
+                <i class="fas fa-home icon-main"></i> 
+                <span class="menu-text">Início</span>
+            </a>
 
+            {% if request.user.is_superuser %}
+                <a href="{% url 'painel_usuarios' %}" style="border-bottom: 1px solid #eee;">
+                    <i class="fas fa-user-shield icon-main" style="color: #dc3545;"></i>
+                    <span class="menu-text" style="color: #dc3545; font-weight: bold;">Gestão de Acessos</span>
+                </a>
+            {% endif %}
+            
+            {% if request.user|has_group:"RH" %}
             <div class="menu-item">
-                <button class="menu-toggle">
-                    <i class="fas fa-chart-line"></i> 
-                    <span>Relatórios Vendas</span> 
-                    <i class="fas fa-chevron-right arrow"></i>
-                </button>
+                <a class="menu-toggle">
+                    <i class="fas fa-users icon-main"></i>
+                    <span class="menu-text">Módulo RH</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </a>
+                
                 <div class="submenu">
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'relatorio_contracheque' %}">
+                        <i class="fas fa-circle"></i> Relatório Contracheque
+                    </a>
+                    {% endif %}
+                    
                     <a href="{% url 'relatorio_vendas' %}">
-                        <i class="fas fa-circle"></i> Meta Vendedores
+                        <i class="fas fa-circle"></i> Relatório Premiação Vendas
                     </a>
-                    <a href="{% url 'vendas_marca' %}">
-                        <i class="fas fa-circle"></i> Vendas por Marca
-                    </a>
-                </div>
-            </div>
-
-            <div class="menu-item">
-                <button class="menu-toggle"><i class="fas fa-file-invoice-dollar"></i> <span>Financeiro</span> <i class="fas fa-chevron-right arrow"></i></button>
-                <div class="submenu">
-                    <a href="{% url 'relatorio_duplicidade_nf' %}"><i class="fas fa-circle"></i> Duplicidade de NF</a>
-                </div>
-            </div>
-
-            {% if user.is_staff %}
-            <div class="menu-item">
-                <button class="menu-toggle"><i class="fas fa-user-shield"></i> <span>Administração</span> <i class="fas fa-chevron-right arrow"></i></button>
-                <div class="submenu">
-                    <a href="{% url 'admin:index' %}"><i class="fas fa-circle"></i> Painel Django</a>
                 </div>
             </div>
             {% endif %}
+
+            {% if request.user|has_group:"Venda Assistida" %}
+            <div class="menu-item">
+                <a class="menu-toggle">
+                    <i class="fas fa-money-bill-wave icon-main"></i>
+                    <span class="menu-text">Venda Assistida</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </a>
+                <div class="submenu">
+                    <a href="{% url 'duplicidade_nf' %}">
+                        <i class="fas fa-circle"></i> Relatório Duplicidade NF Venda Assistida
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if request.user|has_group:"Vendas" %}
+            <div class="menu-item">
+                <a class="menu-toggle">
+                    <i class="fas fa-money-bill-wave icon-main"></i>
+                    <span class="menu-text">Vendas</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </a>
+                <div class="submenu">
+                    <a href="{% url 'vendas_marca' %}">
+                        <i class="fas fa-circle"></i> Relatório Vendas por marca
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
         </div>
 
         <div class="user-area">
-            <form action="{% url 'logout' %}" method="post" style="display: flex; align-items: center; gap: 10px;">
+            <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn-sair-icon" title="Sair do Sistema">
-                    <i class="fas fa-power-off"></i>
-                </button>
+                <button type="submit" class="btn-sair-icon" title="Sair"><i class="fas fa-power-off"></i></button>
                 <div class="user-details">
-                    <p>Olá, <strong>{{ user.username }}</strong></p>
+                    <p>Logado como: <strong>{{ user.username }}</strong></p>
+                    <button type="submit" class="btn-sair-full">Sair do Sistema</button>
                 </div>
             </form>
         </div>
@@ -117,7 +158,6 @@
     </div>
 
     <script>
-        // Lógica para abrir/fechar submenus
         document.querySelectorAll('.menu-toggle').forEach(button => {
             button.addEventListener('click', function() {
                 let parentItem = this.parentElement;
