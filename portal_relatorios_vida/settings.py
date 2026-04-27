@@ -77,6 +77,7 @@ DATABASES = {
         'PASSWORD': 'sigaofc',
         'HOST': '173.29.21.7',
         'PORT': '1521',
+        'CONN_MAX_AGE': 600,
     }
 }
 

@@ -84,9 +84,11 @@ def relatorio_vendas(request):
         if pisa_status.err:
             return HttpResponse('Ocorreu um erro ao gerar o PDF', status=500)
         return response
+    
+    resultados_tela = resultados[:500]
 
     # Se a ação for 'html' (ou qualquer outra coisa), renderiza a ecrã normal
-    return render(request, 'relatorios/relatorio_vendas.html', {'form': form, 'resultados': resultados})
+    return render(request, 'relatorios/relatorio_vendas.html', {'form': form, 'resultados': resultados_tela})
 
 # Relatório Duplicidade de NF venda assistida
 @login_required
@@ -150,8 +152,10 @@ def relatorio_duplicidade_nf(request):
         response['Content-Disposition'] = 'attachment; filename="Duplicidade_NF_OVS.pdf"'
         pisa_status = pisa.CreatePDF(html, dest=response)
         return response
+    
+    resultados_tela = resultados[:500]
 
-    return render(request, 'relatorios/duplicidade_nf.html', {'form': form, 'resultados': resultados})
+    return render(request, 'relatorios/duplicidade_nf.html', {'form': form, 'resultados': resultados_tela})
 
 # Trava de segurança: Retorna True só se o utilizador for SuperAdmin
 def is_admin(user):
