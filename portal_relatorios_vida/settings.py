@@ -1,4 +1,9 @@
 from pathlib import Path
+import os 
+from dotenv import load_dotenv
+
+# Carrega as variáveis do arquivo .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vn2mcv$0!v0ss!dmbi_2zs%)vgc1lfxy+ok7c9@kpi^3-(jl_^'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -73,8 +78,8 @@ DATABASES = {
     'viewsOracle': {
         'ENGINE': 'django.db.backends.oracle',
         'NAME': 'siga',
-        'USER': 'sigaofc',
-        'PASSWORD': 'sigaofc',
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASS'),
         'HOST': '173.29.21.7',
         'PORT': '1521',
         'CONN_MAX_AGE': 600,
@@ -117,7 +122,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-import os 
 # Diz ao Django onde ele deve juntar todas as imagens para o servidor ler
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -129,8 +133,6 @@ LOGIN_URL = '/login/'
 LOGOUT_URL = 'login'
 
 # Configuração de logs de erro (produção)
-import os 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
