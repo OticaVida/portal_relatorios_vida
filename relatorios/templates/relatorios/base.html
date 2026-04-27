@@ -121,6 +121,21 @@
             </div>
             {% endif %}
 
+            {% if request.user|has_group:"Vendas" %}
+            <div class="menu-item">
+                <a class="menu-toggle">
+                    <i class="fas fa-money-bill-wave icon-main"></i>
+                    <span class="menu-text">Vendas</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </a>
+                <div class="submenu">
+                    <a href="{% url 'vendas_marca' %}">
+                        <i class="fas fa-circle"></i> Relatório Vendas por Marca
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
         </div>
 
         <div class="user-area">

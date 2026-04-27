@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from django.http import HttpResponse
+from django.db import connections
 import openpyxl
 from xhtml2pdf import pisa
 from django.template.loader import get_template
@@ -249,3 +250,83 @@ def relatorio_contracheque(request):
         return response
     
     return render(request, 'relatorios/contracheque.html', {'form': form, 'resultados': resultados})
+
+# Relatório vendas filtrando por marca
+def relatorio_vendas_marca(request):
+    resultados = []
+
+    if request.method == 'POST':
+        data_inicio = request.POST.get('data_inicio', '').replace('-', '')
+        data_fim = request.POST.get('data_fim', '').replace('-', '')
+        marca = request.POST.get('marca', '').strip().upper()
+        
+        # Pega a ação clicada no botão (html, excel ou pdf)
+        acao = request.POST.get('acao', 'html')
+
+        if data_inicio and data_fim and marca:
+            query = """
+                SELECT * FROM V_VENDAS_MARCA
+                WHERE EMISSAO BETWEEN %s AND %s
+                AND RTRIM(MARCA) LIKE %s
+            """
+            marca_like = f"%{marca}%"
+
+            with connections['viewsOracle'].cursor() as cursor:
+                cursor.execute(query, [data_inicio, data_fim, marca_like])
+                colunas = [col[0] for col in cursor.description]
+                resultados = [dict(zip(colunas, row)) for row in cursor.fetchall()]
+
+            # ==========================================
+            # EXPORTAR PARA EXCEL 
+            # ==========================================
+            if acao == 'excel':
+                response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                response['Content-Disposition'] = 'attachment; filename="Vendas_Marca_OVS.xlsx"'
+                
+                wb = openpyxl.Workbook()
+                ws = wb.active
+                ws.title = "Vendas por Marca"
+                
+                # Cabeçalhos
+                ws.append(['Filial', 'Emissão', 'Vendedor', 'Nota Fiscal', 'Série', 'Produto', 'Marca'])
+                
+                # Linhas (buscando do dicionário gerado pelo cursor)
+                for item in resultados:
+                    ws.append([
+                        item['FILIAL'], 
+                        item['EMISSAO'], 
+                        item['VENDEDOR'], 
+                        item['NOTA_FISCAL'], 
+                        item['SERIE'], 
+                        item['PRODUTO'], 
+                        item['MARCA']
+                    ])
+                
+                wb.save(response)
+                return response
+
+            # ==========================================
+            # EXPORTAR PARA PDF 
+            # ==========================================
+            elif acao == 'pdf':
+                template = get_template('relatorios/pdf_vendas_marca.html')
+                html = template.render({'resultados': resultados})
+                
+                response = HttpResponse(content_type='application/pdf')
+                # Mantemos o 'inline' aqui para burlar o aviso de segurança do Chrome!
+                response['Content-Disposition'] = 'inline; filename="Vendas_Marca_OVS.pdf"'
+                
+                pisa_status = pisa.CreatePDF(html, dest=response)
+                if pisa_status.err:
+                    return HttpResponse('Ocorreu um erro ao gerar o PDF', status=500)
+                return response
+
+            # ==========================================
+            # EXIBIÇÃO NA TELA (HTML)
+            # ==========================================
+            # Limita a 500 para não travar o navegador
+            resultados_tela = resultados[:500]
+            return render(request, 'relatorios/vendas_marca.html', {'resultados': resultados_tela})
+
+    # Renderiza a página em branco caso seja o primeiro acesso (GET)
+    return render(request, 'relatorios/vendas_marca.html', {'resultados': resultados})

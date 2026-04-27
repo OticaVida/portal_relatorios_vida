@@ -1,0 +1,94 @@
+{% extends 'relatorios/base.html' %} 
+
+{% block content %}
+<style>
+    /* Seguindo o padrão do seu relatorio_vendas.html */
+    .filtros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .filtros-grid input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    .filtros-grid label { font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px; display: block; }
+    .btn-acao { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-size: 14px; }
+    .btn-filtrar { background-color: #004a8d; }
+    .btn-excel { background-color: #217346; }
+    .btn-pdf { background-color: #dc3545; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+    th { background-color: #f8f9fa; color: #333; font-weight: bold; font-size: 13px; text-transform: upper; }
+    tr:hover { background-color: #f9f9f9; }
+</style>
+
+<div class="container-fluid">
+    <h2 style="margin-bottom: 25px; color: #333;">
+        <i class="fas fa-tags" style="color: #004a8d;"></i> Vendas por Marca
+    </h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="filtros-grid">
+            <div>
+                <label>Data Início</label>
+                <input type="date" name="data_inicio" required value="{{ request.POST.data_inicio }}">
+            </div>
+            <div>
+                <label>Data Fim</label>
+                <input type="date" name="data_fim" required value="{{ request.POST.data_fim }}">
+            </div>
+            <div>
+                <label>Marca (Filtro parcial)</label>
+                <input type="text" name="marca" placeholder="Ex: CARMIM" required value="{{ request.POST.marca }}">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 30px; display: flex; gap: 10px;">
+            <button type="submit" name="acao" value="html" class="btn-acao btn-filtrar">
+                <i class="fas fa-search"></i> Filtrar Dados
+            </button>
+
+            {% if resultados %}
+                <button type="submit" name="acao" value="excel" class="btn-acao btn-excel">
+                    <i class="fas fa-file-excel"></i> Exportar Excel
+                </button>
+                <button type="submit" name="acao" value="pdf" formtarget="_blank" class="btn-acao btn-pdf">
+                    <i class="fas fa-file-pdf"></i> Gerar PDF
+                </button>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if resultados %}
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Filial</th>
+                    <th>Emissão</th>
+                    <th>Vendedor</th>
+                    <th>Nota Fiscal</th>
+                    <th>Série</th>
+                    <th>Produto</th>
+                    <th>Marca</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in resultados %}
+                <tr>
+                    <td>{{ item.FILIAL }}</td>
+                    <td>{{ item.EMISSAO }}</td>
+                    <td>{{ item.VENDEDOR }}</td>
+                    <td>{{ item.NOTA_FISCAL }}</td>
+                    <td>{{ item.SERIE }}</td>
+                    <td>{{ item.PRODUTO }}</td>
+                    <td>{{ item.MARCA }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif request.method == 'POST' %}
+        <div style="text-align: center; padding: 40px; color: #888;">
+            <i class="fas fa-exclamation-circle" style="font-size: 40px; margin-bottom: 10px;"></i>
+            <p>Nenhum dado encontrado para os filtros selecionados.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

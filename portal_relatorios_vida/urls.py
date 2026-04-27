@@ -17,4 +17,5 @@ urlpatterns = [
     path('duplicidade-nf/', rel_views.relatorio_duplicidade_nf, name='duplicidade_nf'),
     path('usuarios/', rel_views.painel_usuarios, name='painel_usuarios'),
     path('contracheque/', rel_views.relatorio_contracheque, name='relatorio_contracheque'),
+    path('vendas-marca/', rel_views.relatorio_vendas_marca, name='vendas_marca'),
 ]
