@@ -127,3 +127,43 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = '/login/' 
 LOGOUT_URL = 'login'
+
+# Configuração de logs de erro (produção)
+import os 
+
+LOGGING = {
+    'verion': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'datalhado': {
+            'format': '[{asctime}] {levelname} [{name}:{lineno}] - {message}',
+            'style': '{',
+            'datefmt': '%d/%m/%Y %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'arquivo_log': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'portal_erros.log'), #Nome do arquivo gerado
+            'formatter': 'detalhado',
+        },
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'detalhado',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['arquivo_log', 'console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'relatorios': { # Captura erros específicos do app
+            'handlers': ['arquivo_log', 'console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
