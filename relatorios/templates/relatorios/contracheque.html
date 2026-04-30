@@ -71,6 +71,8 @@
                     <span style="background: #e6f4ea; color: #1e8e3e; padding: 3px 8px; border-radius: 12px; font-size: 12px;">{{ item.tipo_verba }}</span>
                 {% elif item.tipo_verba == 'Desconto' %}
                     <span style="background: #fce8e6; color: #d93025; padding: 3px 8px; border-radius: 12px; font-size: 12px;">{{ item.tipo_verba }}</span>
+                {% elif item.descricao_verba == 'LIQUIDO A RECEBER' %}
+                    <span style="background: #e6f4ea; color: #1e8e3e; padding: 3px 8px; border-radius: 12px; font-size: 12px;">{{ item.descricao_verba }}</span>
                 {% else %}
                     <span style="background: #f1f3f4; color: #5f6368; padding: 3px 8px; border-radius: 12px; font-size: 12px;">{{ item.tipo_verba }}</span>
                 {% endif %}
