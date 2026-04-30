@@ -36,5 +36,5 @@ class FiltroDuplicidadeNFForm(forms.Form):
 class FiltroContrachequeForm(forms.Form):
     filial = forms.CharField(required=False, label='Filial')
     matricula = forms.CharField(required=False, label='Matricula')
-    data_de = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}), label='Data De')
-    data_ate = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}), label='Data ate')
+    #data_de = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}), label='Data De')
+    #data_ate = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}), label='Data ate')
