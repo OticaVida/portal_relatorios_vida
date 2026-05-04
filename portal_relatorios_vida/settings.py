@@ -85,8 +85,8 @@ DATABASES = {
         'NAME': 'siga',
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASS'),
-        'HOST': '173.29.21.7',
-        'PORT': '1521',
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
         'CONN_MAX_AGE': 600,
     }
 }
